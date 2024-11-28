@@ -8,7 +8,7 @@ A Python-based tool to generate high-entropy passwords using Leet substitutions 
 - Ensures minimum entropy for generated passwords.
 
 ## Requirements
-- Python 3.7 or later
+- Python 3.9 or later
 
 ## Installation
 Clone this repository and install the dependencies:
