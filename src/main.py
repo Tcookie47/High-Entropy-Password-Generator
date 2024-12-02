@@ -39,16 +39,24 @@ random_set = letters + numbers + special_chars
 def return_entropy(char):
     return len(char) * math.log2(len(set(char)))
 
-def return_strong_password(linuxword):
-    temp_passwords=["".join(var) for var in list(itertools.product(*[LEET_SUBSTITUTIONS[char.lower()] for char in ''.join(random.sample(linuxword, len(linuxword))) if char.lower() in LEET_SUBSTITUTIONS]))]
-    temp_passwords.sort(key=return_entropy)
-    desired_password = temp_passwords[-1]
+def random_index(n):
+    return random.sample([i for i in range(n)], n//2)
 
-    while int(return_entropy(desired_password)) <= 120:
+def return_strong_password(linuxword_ele: str, entropy: int) -> str:
+    linuxword=[i for i in linuxword_ele]
+
+    indexes = random_index(len(linuxword))
+
+    for i in indexes:
+        linuxword[i]=random.choice(LEET_SUBSTITUTIONS[linuxword[i].lower()])
+
+    desired_password="".join(linuxword)
+    while int(return_entropy(desired_password)) <= entropy:
         random_char = random.choice(random_set)
         desired_password += random_char
 
-    print(f"Original Linuxword: {linuxword} | Password: {desired_password} | Entropy: {return_entropy(desired_password)}")    
+    print(f"Original Linuxword: {linuxword_ele} | Password: {desired_password} | Entropy: {return_entropy(desired_password)}")   
+     
     return desired_password
 
 def read_input(input_file):
@@ -60,14 +68,16 @@ def write_output(output_file, passwords):
         for password in passwords:
             file.write(password + '\n')
 
-def main(input_file, output_file):
+def main(input_file, output_file, entropy):
     passwords = read_input(input_file)
-    improved_passwords = [return_strong_password(password) for password in passwords]
+    improved_passwords = [return_strong_password(password, entropy=entropy) for password in passwords]
     write_output(output_file, improved_passwords)
 
 if __name__ == "__main__":
     import sys
     if len(sys.argv) < 3:
-        print("Usage: python main.py <input_file> <output_file>")
+        print("Usage: python main.py <input_file> <output_file> [<entropy(int)>]")
     else:
-        main(sys.argv[1], sys.argv[2])
+        entropy = int(sys.argv[3]) if len(sys.argv) > 3 else 60
+        main(sys.argv[1], sys.argv[2], entropy)
+
